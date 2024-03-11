@@ -12,6 +12,8 @@ var colors = require("colors");
 
 처럼 require로 가져올 수 있음
 
+------
+
 package.json에
 
 "type": "module",
