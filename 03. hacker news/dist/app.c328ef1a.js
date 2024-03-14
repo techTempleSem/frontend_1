@@ -134,14 +134,14 @@ function getData(url) {
 function newsFeed() {
   var newsFeed = getData(NEWS_URL);
   var newsList = [];
-  newsList.push("<ul>");
+  var template = "\n    <div class=\"container mx-auto p-4\">\n        <h1>\uB274\uC2A4</h1>\n            <ul>\n            {{__news_feed__}}\n            </ul>\n        <div>\n            <a href='#/page/{{__prev_page__}}'>\uC774\uC804</a>\n            <a href='#/page/{{__next_page__}}'>\uB2E4\uC74C</a>\n        </div>\n    </div>\n    ";
   for (var i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
     newsList.push("<li><a href=\"#/show/".concat(newsFeed[i].id, "\">").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")</a></li>"));
   }
-  console.log(newsFeed.length, store.currentPage * 10);
-  newsList.push("</ul>");
-  newsList.push("<div><a href='#/page/".concat(store.currentPage > 1 ? store.currentPage - 1 : 1, "'>\uC774\uC804</a><a href='#/page/").concat(newsFeed.length - 1 >= store.currentPage * 10 ? store.currentPage + 1 : store.currentPage, "'>\uB2E4\uC74C</a></div>"));
-  container.innerHTML = newsList.join("");
+  template = template.replace("{{__news_feed__}}", newsList.join(""));
+  template = template.replace("{{__prev_page__}}", store.currentPage > 1 ? store.currentPage - 1 : 1);
+  template = template.replace("{{__next_page__}}", newsFeed.length - 1 >= store.currentPage * 10 ? store.currentPage + 1 : store.currentPage);
+  container.innerHTML = template;
 }
 function newsDetail() {
   var id = location.hash.substring(7);
