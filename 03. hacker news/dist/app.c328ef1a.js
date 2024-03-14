@@ -128,25 +128,31 @@ function getData(url) {
   ajax.send();
   return JSON.parse(ajax.response);
 }
-var newsFeed = getData(NEWS_URL);
-var ul = document.createElement("ul");
-window.addEventListener("hashchange", function () {
+function newsFeed() {
+  var newsFeed = getData(NEWS_URL);
+  var newsList = [];
+  newsList.push("<ul>");
+  for (var i = 0; i < 10; i++) {
+    newsList.push("<li><a href=\"#".concat(newsFeed[i].id, "\">").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")</a></li>"));
+  }
+  newsList.push("<ul>");
+  container.innerHTML = newsList.join("");
+}
+function newsDetail() {
   var id = location.hash.substring(1);
   var newsContent = getData(CONTENT_URL.replace("@id", id));
-  var title = this.document.createElement("h1");
-  title.innerHTML = newsContent.title;
-  content.appendChild(title);
-  console.log(newsContent);
-});
-for (var i = 0; i < 10; i++) {
-  var div = document.createElement("div");
-  var li = document.createElement("li");
-  var a = document.createElement("a");
-  div.innerHTML = "<li><a href=\"#".concat(newsFeed[i].id, "\">").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")</a></li>");
-  ul.appendChild(div.firstElementChild);
+  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n    <div><a href='#'>\uBAA9\uB85D\uC73C\uB85C</a></div>\n    ");
 }
-container.appendChild(ul);
-container.appendChild(content);
+function router() {
+  var routePath = location.hash;
+  if (routePath === "") {
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+window.addEventListener("hashchange", router);
+router();
 },{}],"C:/Users/semte/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -172,7 +178,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59071" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61369" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
