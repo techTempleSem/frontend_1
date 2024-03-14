@@ -123,6 +123,9 @@ var ajax = new XMLHttpRequest();
 var content = document.createElement("div");
 var NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
 var CONTENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
+var store = {
+  currentPage: 1
+};
 function getData(url) {
   ajax.open("GET", url, false);
   ajax.send();
@@ -132,22 +135,27 @@ function newsFeed() {
   var newsFeed = getData(NEWS_URL);
   var newsList = [];
   newsList.push("<ul>");
-  for (var i = 0; i < 10; i++) {
-    newsList.push("<li><a href=\"#".concat(newsFeed[i].id, "\">").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")</a></li>"));
+  for (var i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
+    newsList.push("<li><a href=\"#/show/".concat(newsFeed[i].id, "\">").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")</a></li>"));
   }
-  newsList.push("<ul>");
+  console.log(newsFeed.length, store.currentPage * 10);
+  newsList.push("</ul>");
+  newsList.push("<div><a href='#/page/".concat(store.currentPage > 1 ? store.currentPage - 1 : 1, "'>\uC774\uC804</a><a href='#/page/").concat(newsFeed.length - 1 >= store.currentPage * 10 ? store.currentPage + 1 : store.currentPage, "'>\uB2E4\uC74C</a></div>"));
   container.innerHTML = newsList.join("");
 }
 function newsDetail() {
-  var id = location.hash.substring(1);
+  var id = location.hash.substring(7);
   var newsContent = getData(CONTENT_URL.replace("@id", id));
-  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n    <div><a href='#'>\uBAA9\uB85D\uC73C\uB85C</a></div>\n    ");
+  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n    <div><a href='#/page/").concat(store.currentPage, "'>\uBAA9\uB85D\uC73C\uB85C</a></div>\n    ");
 }
 function router() {
   var routePath = location.hash;
   if (routePath === "") {
     newsFeed();
-  } else {
+  } else if (routePath.indexOf("#/page/") >= 0) {
+    store.currentPage = Number(routePath.substring(7));
+    newsFeed();
+  } else if (routePath.indexOf("#/show/") >= 0) {
     newsDetail();
   }
 }
@@ -178,7 +186,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61369" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59071" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
